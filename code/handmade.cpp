@@ -2,42 +2,7 @@
 
 bool Running = true;
 
-void HandleEvent(SDL_Event *Event) {
-
-  switch(Event->type) {
-    case SDL_QUIT: 
-      {
-        printf("SDL_QUIT\n");
-        Running = false;
-      } break;
-    case SDL_WINDOWEVENT: 
-      {
-        switch(Event->window.event) 
-        {
-          case SDL_WINDOWEVENT_RESIZED: 
-            {
-              printf("SDL_WINDOWEVENT_RESIZED (%d, %d)\n", Event->window.data1, Event->window.data2); 
-            } break;
-          case SDL_WINDOWEVENT_EXPOSED: 
-            {
-              SDL_Window *Window = SDL_GetWindowFromID(Event->window.windowID);
-              SDL_Renderer *Renderer = SDL_GetRenderer(Window);
-              static bool IsWhite = true;
-              if (IsWhite == true) {
-                SDL_SetRenderDrawColor(Renderer, 255, 255, 255, 255);
-                IsWhite = false;
-              } else {
-                SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
-                IsWhite = true;
-              }
-              SDL_RenderClear(Renderer);
-              SDL_RenderPresent(Renderer);
-            } break;
-        }
-      }
-  }
-
-}
+void HandleEvent(SDL_Event *);
 
 int main(int argc, char *argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -79,8 +44,58 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    // get width and height of window
+    int Width, Height;
+    SDL_GetWindowSize(Window, &Width, &Height);
+
+    SDL_Texture *Texture =  SDL_CreateTexture(  
+            Renderer,
+            SDL_PIXELFORMAT_ARGB8888,
+            SDL_TEXTUREACCESS_STREAMING,
+            Width,
+            Height);
+
   }
 
   SDL_Quit();
   return (0);
 }
+
+
+void HandleEvent(SDL_Event *Event) {
+
+  switch(Event->type) {
+    case SDL_QUIT: 
+      {
+        printf("SDL_QUIT\n");
+        Running = false;
+      } break;
+    case SDL_WINDOWEVENT: 
+      {
+        switch(Event->window.event) 
+        {
+          case SDL_WINDOWEVENT_RESIZED: 
+            {
+              printf("SDL_WINDOWEVENT_RESIZED (%d, %d)\n", Event->window.data1, Event->window.data2); 
+            } break;
+          case SDL_WINDOWEVENT_EXPOSED: 
+            {
+              SDL_Window *Window = SDL_GetWindowFromID(Event->window.windowID);
+              SDL_Renderer *Renderer = SDL_GetRenderer(Window);
+              static bool IsWhite = true;
+              if (IsWhite == true) {
+                SDL_SetRenderDrawColor(Renderer, 255, 255, 255, 255);
+                IsWhite = false;
+              } else {
+                SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+                IsWhite = true;
+              }
+              SDL_RenderClear(Renderer);
+              SDL_RenderPresent(Renderer);
+            } break;
+        }
+      }
+  }
+
+}
+
